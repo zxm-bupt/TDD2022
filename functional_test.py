@@ -1,5 +1,8 @@
 from selenium import webdriver
 import unittest
+from selenium.webdriver.common.keys import Keys
+import time
+from selenium.webdriver.common.by import By
 
 class NewVisitorTest(unittest.TestCase):
     def setUp(self):
@@ -14,27 +17,25 @@ class NewVisitorTest(unittest.TestCase):
         self.browser.get('http://localhost:8000')
 
         #She notices the page title and header mention to-do listss
-        self.assertIn ('To-Do', self.browser.title), "Browser title was: " + self.browser.title
+        self.assertIn ('To-Do', self.browser.title)
+        header_text = self.browser.find_element(By.TAG_NAME, 'h1').text
+        self.assertIn('To-Do', header_text)
+
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        self.assertEqual(
+                inputbox.get_attribute('placeholder')
+                )
+
+        inputbox.send_keys('Buy peacock feathers')
+
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element(By.ID, 'id_list_table')
+        rows = table.find_element(By.TAG_NAME, 'tr')
+        self.assertTure(
+                any(row.text == '1:Buy peacock feathers' for row in rows)
+                )
         self.fail('Finish the test!')
 if __name__ == '__main__':
     unittest.main()
-#She is invited to enter a to-do item straight away
-
-#She typs "Buy peacock feathers" into a text box (Edith's hobby
-#is trying fly-fishing lures)
-
-#When she hits enter, the page updates, and now the page lists 
-#"1: Buy peacock feathers" as an item in a to-do list
-
-#There is still a text box inviting he to add another item, She
-#enters "Use peacock feathers to make a fly"（Edith is very methodical）
-
-#The page updates again, and now shows both items on her list
-
-#Edith wonders whether the site will remember her list. Then she sees 
-#that the site has generated a unique URL for her -- there is some 
-#explanatory text to that effect
-
-#she visits that URLs - her to-do list is still there
-#Satisfied, she goes back to sleep 
-browser.quit()
